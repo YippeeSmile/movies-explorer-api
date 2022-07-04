@@ -14,7 +14,7 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { validateLogin, validateCreateUser } = require('./middlewares/validation');
 
 const app = express();
-const { PORT = 3000 } = process.env;
+const { PORT = 3001 } = process.env;
 app.use(limiter);
 app.use(helmet());
 
