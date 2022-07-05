@@ -1,11 +1,12 @@
 const router = require('express').Router();
-const users = require('./users');
-const movies = require('./movies');
+const auth = require('../middlewares/auth');
+const userRouter = require('./users');
+const movieRouter = require('./movies');
 const NotFoundError = require('../errors/NotFoundError');
 
-router.use(require('/users', users));
-router.use(require('/movies', movies));
-
+router.use(auth);
+router.use(require('./users', userRouter));
+router.use(require('./movies', movieRouter));
 router.use('*', (_, __, next) => next(new NotFoundError('Запрашиваемая страница не найдена')));
 
 module.exports = router;
