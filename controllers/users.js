@@ -71,9 +71,9 @@ const getUser = (req, res, next) => {
 };
 
 const updateUser = (req, res, next) => {
-  const { email, name } = req.body;
+  const { name, email } = req.body;
 
-  return User.findByIdAndUpdate(req.user._id, { email, name }, { new: true, runValidators: true })
+  return User.findByIdAndUpdate(req.user._id, { name, email }, { new: true, runValidators: true })
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
