@@ -2,7 +2,6 @@ const Movie = require('../models/movie');
 const BadRequestError = require('../errors/BadRequestError');
 
 const createMovie = (req, res, next) => {
-  const owner = req.user;
   const {
     country,
     director,
@@ -29,10 +28,10 @@ const createMovie = (req, res, next) => {
     nameEN,
     thumbnail,
     movieId,
-    owner,
+    owner: req.user._id,
   })
-    .then((data) => {
-      res.send(data);
+    .then((movie) => {
+      res.send(movie);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -49,7 +48,7 @@ const getMovies = (req, res, next) => {
 };
 
 const deleteMovie = (req, res, next) => {
-  Movie.findById(req.params.movieId)
+  Movie.findById(req.params._id)
     .then((movie) => {
       if (!movie.owner.equals(req.user._id)) {
         return next(new Error('Нельзя удалить чужой фильм'));
