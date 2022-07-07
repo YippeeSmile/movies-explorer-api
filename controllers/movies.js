@@ -1,5 +1,6 @@
 const Movie = require('../models/movie');
 const BadRequestError = require('../errors/BadRequestError');
+const ForbiddenError = require('../errors/ForbiddenError');
 
 const createMovie = (req, res, next) => {
   const {
@@ -51,7 +52,7 @@ const deleteMovie = (req, res, next) => {
   Movie.findById(req.params._id)
     .then((movie) => {
       if (!movie.owner.equals(req.user._id)) {
-        return next(new Error('Нельзя удалить чужой фильм'));
+        return next(new ForbiddenError('Нет прав на удаление фильма'));
       }
       return Movie.deleteOne(movie)
         .then(() => res.send(movie));
