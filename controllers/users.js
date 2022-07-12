@@ -12,10 +12,6 @@ const MONGO_DUPLICATE_KEY_CODE = 11000;
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
-  if (!email || !password) {
-    return next(new BadRequestError({ message: 'Не передан email или пароль' }));
-  }
-
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign(
@@ -25,13 +21,7 @@ const login = (req, res, next) => {
       );
       res.send({ token });
     })
-    .catch((err) => {
-      if (err.name === 'AuthorizationError') {
-        next(new AuthorizationError('Неправильный логин или пароль'));
-      } else {
-        next(err);
-      }
-    });
+    .catch(() => next(new AuthorizationError('Авторизация не пройдена')));
 };
 
 const createUser = (req, res, next) => {
