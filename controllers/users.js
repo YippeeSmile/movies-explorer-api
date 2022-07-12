@@ -4,6 +4,7 @@ const User = require('../models/user');
 const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
 const ConflictError = require('../errors/ConflictError');
+const AuthorizationError = require('../errors/AuthorisationError');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 const MONGO_DUPLICATE_KEY_CODE = 11000;
@@ -24,7 +25,13 @@ const login = (req, res, next) => {
       );
       res.send({ token });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'AuthorizationError') {
+        next(new AuthorizationError('Неправильный логин или пароль'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const createUser = (req, res, next) => {
@@ -45,7 +52,7 @@ const createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.code === MONGO_DUPLICATE_KEY_CODE) {
-        next(new ConflictError('Данный email уже зарегистрирован', 409));
+        next(new ConflictError('Данный email уже зарегистрирован'));
       } else {
         next(err);
       }
